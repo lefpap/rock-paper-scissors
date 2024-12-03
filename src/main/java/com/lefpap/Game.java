@@ -70,7 +70,7 @@ public class Game {
         throw new IllegalStateException("No winner exists!");
     }
 
-    PlayerChoice inputToChoice(String input) {
+    private PlayerChoice inputToChoice(String input) {
         return switch (input.toLowerCase()) {
             case "r", "rock" -> PlayerChoice.ROCK;
             case "p", "paper" -> PlayerChoice.PAPER;
@@ -79,12 +79,12 @@ public class Game {
         };
     }
 
-    PlayerChoice randomChoice() {
+    private PlayerChoice randomChoice() {
         int totalChoices = PlayerChoice.values().length;
         return PlayerChoice.values()[rnd.nextInt(0, totalChoices)];
     }
 
-    RoundResult resolveRoundResult(PlayerChoice one, PlayerChoice two) {
+    private RoundResult resolveRoundResult(PlayerChoice one, PlayerChoice two) {
         if (Objects.equals(one, two)) {
             return RoundResult.DRAW;
         }
@@ -107,7 +107,7 @@ public class Game {
         throw new IllegalStateException("An impossible case reached - Player 1: %s | Player 2: %s".formatted(one.name(), two.name()));
     }
 
-    Optional<RoundResult> rockBeatsScissors(PlayerChoice one, PlayerChoice two) {
+    private Optional<RoundResult> rockBeatsScissors(PlayerChoice one, PlayerChoice two) {
         if (PlayerChoice.ROCK.equals(one) && PlayerChoice.SCISSORS.equals(two)) {
             return Optional.of(RoundResult.PLAYER_ONE_WINS);
         }
@@ -118,7 +118,7 @@ public class Game {
         return Optional.empty();
     }
 
-    Optional<RoundResult> scissorsBeatsPaper(PlayerChoice one, PlayerChoice two) {
+    private Optional<RoundResult> scissorsBeatsPaper(PlayerChoice one, PlayerChoice two) {
         if (PlayerChoice.SCISSORS.equals(one) && PlayerChoice.PAPER.equals(two)) {
             return Optional.of(RoundResult.PLAYER_ONE_WINS);
         }
@@ -129,7 +129,7 @@ public class Game {
         return Optional.empty();
     }
 
-    Optional<RoundResult> paperBeatsRock(PlayerChoice one, PlayerChoice two) {
+    private Optional<RoundResult> paperBeatsRock(PlayerChoice one, PlayerChoice two) {
         if (PlayerChoice.PAPER.equals(one) && PlayerChoice.ROCK.equals(two)) {
             return Optional.of(RoundResult.PLAYER_ONE_WINS);
         }
