@@ -1,154 +1,100 @@
 package com.lefpap;
 
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
+
+import static com.lefpap.GameConfig.PLAYER_ONE_NAME;
+import static com.lefpap.GameConfig.PLAYER_TWO_NAME;
+import static com.lefpap.GameConfig.ROUND_LINE_SEPARATOR;
+import static com.lefpap.GameConfig.SCORE_TO_WIN;
+import static com.lefpap.GameConfig.WINNING_RULES;
 
 public class Game {
 
-    private static final Scanner scanner = new Scanner(System.in);
-
-    private static final int SCORE_TO_WIN = 3;
-    private static final Random rnd = new Random();
+    private static final Scanner SCANNER = new Scanner(System.in);
+    private static final Random RND = new Random();
 
     private int playerOneScore = 0;
     private int playerTwoScore = 0;
     private int currentRound = 1;
 
     public void run() {
-        do {
-            try {
-                System.out.printf("Round %d%n", currentRound);
-                System.out.printf("Score: |P1 %d| vs |P2 %d| Win at: %d%n", playerOneScore, playerTwoScore, SCORE_TO_WIN);
+        while (getWinnerName().isEmpty()) {
+            System.out.printf("Round %d%n", currentRound);
+            System.out.printf("Score: |%s %d| vs |%s %d| Win at: %d%n", PLAYER_ONE_NAME, playerOneScore, PLAYER_TWO_NAME, playerTwoScore, SCORE_TO_WIN);
 
-                System.out.print("P1 choice: ");
-                String playerOneInput = scanner.nextLine().trim().toLowerCase();
-                PlayerChoice playerOneChoice = inputToChoice(playerOneInput);
+            PlayerChoice playerOneChoice = getInputChoice(PLAYER_ONE_NAME);
+            PlayerChoice playerTwoChoice = getRandomChoice(PLAYER_TWO_NAME);
 
-                PlayerChoice playerTwoChoice = randomChoice();
-                System.out.printf("P2 choice: %s%n", playerTwoChoice.name());
+            System.out.printf("%s %s VS %s %s%n", PLAYER_ONE_NAME, playerOneChoice.name(), PLAYER_TWO_NAME, playerTwoChoice.name());
+            RoundResult roundResult = resolveRound(playerOneChoice, playerTwoChoice);
 
-                System.out.printf("P1 picked: %s | P2 picked: %s%n", playerOneChoice.name(), playerTwoChoice.name());
-                RoundResult roundResult = resolveRoundResult(playerOneChoice, playerTwoChoice);
+            updateScores(roundResult);
+            printRoundResult(roundResult);
+            currentRound++;
 
-                switch (roundResult) {
-                    case DRAW -> System.out.printf("Round %d is a draw!%n", currentRound);
-                    case PLAYER_ONE_WINS -> {
-                        System.out.printf("P1 wins round %d%n", currentRound);
-                        playerOneScore++;
-                    }
-                    case PLAYER_TWO_WINS -> {
-                        System.out.printf("P2 wins round %d%n", currentRound);
-                        playerTwoScore++;
-                    }
-                }
-
-                currentRound++;
-                System.out.println("-".repeat(20));
-            } catch (IllegalArgumentException | IllegalStateException ex) {
-                System.err.println(ex.getMessage());
+            System.out.println(ROUND_LINE_SEPARATOR);
+            System.out.println("Press any key to continue, or type 'quit/q' to quit.");
+            String input = SCANNER.nextLine().trim();
+            if ("q".equalsIgnoreCase(input) || "quit".equalsIgnoreCase(input)) {
+                System.out.println("Game aborted!");
+                return;
             }
-        } while (!winnerExists());
-
-        System.out.printf("The winner is %s on round %d 🎉%n", getWinnerName(), currentRound);
-    }
-
-    private boolean winnerExists() {
-        return playerOneScore == SCORE_TO_WIN || playerTwoScore == SCORE_TO_WIN;
-    }
-
-    private String getWinnerName() {
-        if (playerOneScore == SCORE_TO_WIN) {
-            return "P1";
         }
 
-        if (playerTwoScore == SCORE_TO_WIN) {
-            return "P2";
+        System.out.printf("The winner is %s on round %d 🎉%n", getWinnerName().orElseThrow(), currentRound);
+    }
+
+    private Optional<String> getWinnerName() {
+        if (playerOneScore >= SCORE_TO_WIN) return Optional.of(PLAYER_ONE_NAME);
+        if (playerTwoScore >= SCORE_TO_WIN) return Optional.of(PLAYER_TWO_NAME);
+        return Optional.empty();
+    }
+
+    private PlayerChoice getInputChoice(String playerName) {
+        while (true) {
+            System.out.printf("%s choice: ", playerName);
+            String choice = SCANNER.nextLine().trim();
+            try {
+                return switch (choice.toLowerCase()) {
+                    case "r", "rock" -> PlayerChoice.ROCK;
+                    case "p", "paper" -> PlayerChoice.PAPER;
+                    case "s", "scissors" -> PlayerChoice.SCISSORS;
+                    default ->
+                        throw new InvalidPlayerChoiceException("Invalid choice! Please type [PAPER, ROCK, SCISSORS] or [r, p, s].");
+                };
+            } catch (InvalidPlayerChoiceException e) {
+                System.err.println(e.getMessage());
+            }
         }
-
-        throw new IllegalStateException("No winner exists!");
     }
 
-    PlayerChoice inputToChoice(String input) {
-        return switch (input.toLowerCase()) {
-            case "r", "rock" -> PlayerChoice.ROCK;
-            case "p", "paper" -> PlayerChoice.PAPER;
-            case "s", "scissors" -> PlayerChoice.SCISSORS;
-            default -> throw new IllegalArgumentException("Invalid choice: %s, you have to type either [PAPER, ROCK, SCISSORS] or [r, p, s] case insensitive".formatted(input));
-        };
-    }
-
-    PlayerChoice randomChoice() {
+    private PlayerChoice getRandomChoice(String playerName) {
         int totalChoices = PlayerChoice.values().length;
-        return PlayerChoice.values()[rnd.nextInt(0, totalChoices)];
+        PlayerChoice choice = PlayerChoice.values()[RND.nextInt(0, totalChoices)];
+        System.out.printf("%s choice: %s%n", playerName, choice.name());
+        return choice;
     }
 
-    RoundResult resolveRoundResult(PlayerChoice one, PlayerChoice two) {
-        if (Objects.equals(one, two)) {
+    private RoundResult resolveRound(PlayerChoice one, PlayerChoice two) {
+        if (one.equals(two)) {
             return RoundResult.DRAW;
         }
-
-        Optional<RoundResult> rockWinner = rockBeatsScissors(one, two);
-        if (rockWinner.isPresent()) {
-            return rockWinner.get();
-        }
-
-        Optional<RoundResult> scissorsWinner = scissorsBeatsPaper(one, two);
-        if (scissorsWinner.isPresent()) {
-            return scissorsWinner.get();
-        }
-
-        Optional<RoundResult> paperWinner = paperBeatsRock(one, two);
-        if (paperWinner.isPresent()) {
-            return paperWinner.get();
-        }
-
-        throw new IllegalStateException("An impossible case reached - Player 1: %s | Player 2: %s".formatted(one.name(), two.name()));
+        return WINNING_RULES.get(one).equals(two) ? RoundResult.PLAYER_ONE_WINS : RoundResult.PLAYER_TWO_WINS;
     }
 
-    Optional<RoundResult> rockBeatsScissors(PlayerChoice one, PlayerChoice two) {
-        if (PlayerChoice.ROCK.equals(one) && PlayerChoice.SCISSORS.equals(two)) {
-            return Optional.of(RoundResult.PLAYER_ONE_WINS);
+    private void updateScores(RoundResult result) {
+        if (result == RoundResult.PLAYER_ONE_WINS) {
+            playerOneScore++;
+        } else if (result == RoundResult.PLAYER_TWO_WINS) {
+            playerTwoScore++;
         }
-        if (PlayerChoice.ROCK.equals(two) && PlayerChoice.SCISSORS.equals(one)) {
-            return Optional.of(RoundResult.PLAYER_TWO_WINS);
-        }
-
-        return Optional.empty();
     }
 
-    Optional<RoundResult> scissorsBeatsPaper(PlayerChoice one, PlayerChoice two) {
-        if (PlayerChoice.SCISSORS.equals(one) && PlayerChoice.PAPER.equals(two)) {
-            return Optional.of(RoundResult.PLAYER_ONE_WINS);
+    private void printRoundResult(RoundResult result) {
+        switch (result) {
+            case DRAW -> System.out.printf("Round %d is a draw!%n", currentRound);
+            case PLAYER_ONE_WINS -> System.out.printf("%s wins round %d%n", PLAYER_ONE_NAME, currentRound);
+            case PLAYER_TWO_WINS -> System.out.printf("%s wins round %d%n", PLAYER_TWO_NAME, currentRound);
         }
-        if (PlayerChoice.SCISSORS.equals(two) && PlayerChoice.PAPER.equals(one)) {
-            return Optional.of(RoundResult.PLAYER_TWO_WINS);
-        }
-
-        return Optional.empty();
-    }
-
-    Optional<RoundResult> paperBeatsRock(PlayerChoice one, PlayerChoice two) {
-        if (PlayerChoice.PAPER.equals(one) && PlayerChoice.ROCK.equals(two)) {
-            return Optional.of(RoundResult.PLAYER_ONE_WINS);
-        }
-        if (PlayerChoice.PAPER.equals(two) && PlayerChoice.ROCK.equals(one)) {
-            return Optional.of(RoundResult.PLAYER_TWO_WINS);
-        }
-
-        return Optional.empty();
-    }
-
-    enum PlayerChoice {
-        ROCK,
-        PAPER,
-        SCISSORS;
-    }
-
-    enum RoundResult {
-        PLAYER_ONE_WINS,
-        PLAYER_TWO_WINS,
-        DRAW;
     }
 }
