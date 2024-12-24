@@ -4,7 +4,7 @@ import com.lefpap.player.PlayerIndex;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ScoreboardTest {
 
@@ -23,7 +23,7 @@ class ScoreboardTest {
 
     @Test
     void test_incrementPlayerOneScore() {
-        scoreboard.incrementPlayerScore(PlayerIndex.PLAYER_ONE);
+        scoreboard.updateScores(RoundResult.PLAYER_ONE_WINS);
 
         assertEquals(1, scoreboard.getPlayerScore(PlayerIndex.PLAYER_ONE));
         assertEquals(0, scoreboard.getPlayerScore(PlayerIndex.PLAYER_TWO));
@@ -31,7 +31,7 @@ class ScoreboardTest {
 
     @Test
     void test_incrementPlayerTwoScore() {
-        scoreboard.incrementPlayerScore(PlayerIndex.PLAYER_TWO);
+        scoreboard.updateScores(RoundResult.PLAYER_TWO_WINS);
 
         assertEquals(0, scoreboard.getPlayerScore(PlayerIndex.PLAYER_ONE));
         assertEquals(1, scoreboard.getPlayerScore(PlayerIndex.PLAYER_TWO));
@@ -39,9 +39,9 @@ class ScoreboardTest {
 
     @Test
     void test_multipleScoreIncrements() {
-        scoreboard.incrementPlayerScore(PlayerIndex.PLAYER_ONE);
-        scoreboard.incrementPlayerScore(PlayerIndex.PLAYER_ONE);
-        scoreboard.incrementPlayerScore(PlayerIndex.PLAYER_TWO);
+        scoreboard.updateScores(RoundResult.PLAYER_ONE_WINS);
+        scoreboard.updateScores(RoundResult.PLAYER_ONE_WINS);
+        scoreboard.updateScores(RoundResult.PLAYER_TWO_WINS);
 
         assertEquals(2, scoreboard.getPlayerScore(PlayerIndex.PLAYER_ONE));
         assertEquals(1, scoreboard.getPlayerScore(PlayerIndex.PLAYER_TWO));
