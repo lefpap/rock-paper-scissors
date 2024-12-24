@@ -31,17 +31,13 @@ public class Scoreboard {
         };
     }
 
-    /**
-     * Increments the score of the specified player by 1.
-     *
-     * @param playerIndex the index of the player whose score is to be incremented
-     * @throws IllegalArgumentException if the provided {@code playerIndex} is invalid
-     */
-    public void incrementPlayerScore(PlayerIndex playerIndex) {
-        switch (playerIndex) {
-            case PLAYER_ONE -> playerOneScore++;
-            case PLAYER_TWO -> playerTwoScore++;
-            default -> throw new IllegalArgumentException("Invalid player index: %s".formatted(playerIndex));
+    public void updateScores(RoundResult roundResult) {
+        switch (roundResult) {
+            case PLAYER_ONE_WINS -> playerOneScore++;
+            case PLAYER_TWO_WINS -> playerTwoScore++;
+            case DRAW -> {
+                // No update on draw
+            }
         }
     }
 }
