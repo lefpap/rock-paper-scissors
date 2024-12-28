@@ -23,16 +23,26 @@ This project explores the development of a Rock-Paper-Scissors game, evolving fr
 ## How to Run
 
 ### Requirements
-- Maven
 - Java Development Kit (JDK) 23 or higher.
-- Terminal or IDE for Java applications.
 
 ### Steps
 1. Clone the repository.
-2. Build the project using Maven:
+    ```bash
+    git clone https://github.com/lefpap/rock-paper-scissors.git
+    cd rock-paper-scissors
+    ```
+2. Use the Maven Wrapper to build the project:
+   
+    - On Linux/Mac:
+    ```bash
+    ./mvnw clean install
+    ```
+   - On Windows:
+    
    ```bash
-   mvn clean install
-   ```
+    .\mvnw.cmd clean install
+    ```
+
 3. Run the game:
    ```bash
    java -jar target/rock-paper-scissors-1.0-SNAPSHOT.jar
