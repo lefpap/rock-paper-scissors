@@ -49,7 +49,7 @@ flowchart LR
 ```bash
 git clone https://github.com/lefpap/rock-paper-scissors.git
 cd rock-paper-scissors
-./mvnw clean verify
+bash ./mvnw clean verify
 java -jar target/rock-paper-scissors-1.0-SNAPSHOT.jar
 ```
 
@@ -60,7 +60,7 @@ On Windows, use `mvnw.cmd` instead of `./mvnw`. The console game pits a human pl
 JUnit 5 tests cover game state, rounds, scoring and player choices. Run them with:
 
 ```bash
-./mvnw test
+bash ./mvnw test
 ```
 
 The [GitHub Actions workflow](.github/workflows/ci.yml) runs the Maven verification build on pushes and pull requests.
