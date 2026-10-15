@@ -1,6 +1,6 @@
 # Rock–Paper–Scissors: A Java Refactoring Case Study
 
-A small console game used to explore **incremental refactoring, object-oriented design, and testability**. The interesting part isn't the game itself—it's how the implementation evolves from tightly coupled logic to clearly separated responsibilities.
+A small console game used to explore **incremental refactoring, object-oriented design, and testability**. The interesting part isn't the game itself:it's how the implementation evolves from tightly coupled logic to clearly separated responsibilities.
 
 **Java 23 · Maven · JUnit 5 · Strategy pattern · Template Method-style game loop**
 
@@ -8,9 +8,9 @@ A small console game used to explore **incremental refactoring, object-oriented 
 
 | Version | Approach | What changed |
 | --- | --- | --- |
-| [Initial — `refactor/000`](https://github.com/lefpap/rock-paper-scissors/tree/refactor/000) | A straightforward game | Input, rules, scoring and control flow live close together |
-| [First refactor — `refactor/001`](https://github.com/lefpap/rock-paper-scissors/tree/refactor/001) | Extract responsibilities | Configuration, smaller methods and error handling |
-| [Final design — `refactor/002`](https://github.com/lefpap/rock-paper-scissors/tree/refactor/002) | Separate behavior from state | Game loop, round/score management and choice strategies |
+| [Initial : `refactor/000`](https://github.com/lefpap/rock-paper-scissors/tree/refactor/000) | A straightforward game | Input, rules, scoring and control flow live close together |
+| [First refactor : `refactor/001`](https://github.com/lefpap/rock-paper-scissors/tree/refactor/001) | Extract responsibilities | Configuration, smaller methods and error handling |
+| [Final design : `refactor/002`](https://github.com/lefpap/rock-paper-scissors/tree/refactor/002) | Separate behavior from state | Game loop, round/score management and choice strategies |
 
 The branches are snapshots for comparing approaches; `master` contains the current implementation.
 
@@ -40,7 +40,7 @@ flowchart LR
 
 **State kept separate.** `GameState`, `Round`, and `Scoreboard` track outcomes and scores separately from console presentation and player input.
 
-**A deliberate trade-off.** This is more abstraction than a tiny console game needs. The point is to compare design approaches and practice introducing seams for testing—not to claim that every small game requires a framework.
+**A deliberate trade-off.** This is more abstraction than a tiny console game needs. The point is to compare design approaches and practice introducing seams for testing:not to claim that every small game requires a framework.
 
 ## Run locally
 
