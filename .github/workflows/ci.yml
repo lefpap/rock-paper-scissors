@@ -19,4 +19,4 @@ jobs:
           java-version: '23'
           cache: maven
       - name: Build and run tests
-        run: ./mvnw --batch-mode --no-transfer-progress clean verify
+        run: bash ./mvnw --batch-mode --no-transfer-progress clean verify
